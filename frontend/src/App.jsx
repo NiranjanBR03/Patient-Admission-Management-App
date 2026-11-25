@@ -33,6 +33,7 @@ function AppShell() {
       </nav>
       <div className="sidebar-bottom"><div className="user-card"><div className="avatar">JD</div><div><strong>Jane Doe</strong><span>Hospital Staff</span></div><button className="chevron-button" onClick={() => setUserOpen(!userOpen)} aria-label="Open user menu"><ChevronDown size={15} /></button>{userOpen && <div className="user-menu"><strong>Jane Doe</strong><span>Demo hospital staff</span></div>}</div></div>
     </aside>
+    {mobileOpen && <button type="button" className="sidebar-backdrop" aria-label="Close navigation" onClick={() => setMobileOpen(false)} />}
     <main className="main-content">
       <header className="topbar"><button className="icon-button mobile-menu" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Open navigation"><Menu size={21} /></button><div><p className="eyebrow">{new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p><h1>{greeting}, Jane <span>👋</span></h1></div><div className="topbar-actions"><div className={`online-dot ${health ? '' : 'offline'}`}><span /> {health ? 'System operational' : 'Server unreachable'}</div><div className="avatar">JD</div></div></header>
       <Routes><Route path="/" element={<Overview notify={notify} />} /><Route path="/patients" element={<Patients notify={notify} />} /><Route path="*" element={<Overview notify={notify} />} /></Routes>
