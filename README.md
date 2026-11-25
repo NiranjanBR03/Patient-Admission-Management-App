@@ -1,0 +1,170 @@
+# DScribe Patient Admission Management
+
+A full-stack hospital patient admission dashboard for the DScribe Software Engineer Intern Round 1 assignment.
+
+## Why this stack
+
+- React + Vite + React Router provide a fast, route-aware browser application.
+- Flask provides a small, explicit REST API that is easy to explain in an interview.
+- SQLAlchemy and Flask-Migrate keep persistence and schema changes explicit.
+- PostgreSQL provides durable relational storage; Docker makes local setup repeatable.
+
+## Features
+
+- Overview dashboard with full-dataset statistics and recent admissions
+- Patient records route at `/patients` with search and URL-synchronised filters
+- Add, edit, delete, inspect, and discharge patients
+- Frontend and backend validation with matching messages
+- IST-aware admission-date validation
+- Custom confirmation dialogs and toast notifications
+- Health status polling every 30 seconds
+- Responsive sidebar, table, forms, and modals
+
+## Local run
+
+Prerequisites: Docker Desktop, Node.js 20+, and npm.
+
+Start the database and API:
+
+```powershell
+cd C:\Users\DELL\Desktop\Dscribe
+Copy-Item .env.example .env
+docker compose up -d postgres
+docker compose run --rm backend flask db upgrade
+docker compose up -d --build backend
+```
+
+Start the frontend in a second terminal:
+
+```powershell
+cd C:\Users\DELL\Desktop\Dscribe\frontend
+npm install
+npm run dev -- --host 127.0.0.1
+```
+
+Open `http://127.0.0.1:5173/`. Check the API with `http://127.0.0.1:5000/health`.
+
+## Environment variables
+
+The root `.env` controls the local Docker database and backend. It is based on [.env.example](./.env.example) and is ignored by Git. Backend settings for a non-Docker run are based on [backend/.env.example](./backend/.env.example):
+
+```text
+DATABASE_URL=postgresql+psycopg://dscribe_app:replace-with-a-local-password@localhost:55432/dscribe
+CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+```
+
+Frontend `.env`:
+
+```text
+VITE_API_URL=http://127.0.0.1:5000/api
+```
+
+Secrets and `.env` files are excluded by `.gitignore`. Production values belong in Secret Manager or deployment environment variables.
+
+## Architecture
+
+```text
+React/Vite frontend :5173
+        |
+        | Axios REST calls
+        v
+Flask/Gunicorn API :5000
+        |
+        v
+PostgreSQL dscribe database
+        |
+        v
+Docker named volume dscribe_dscribe-postgres
+```
+
+## Folder structure
+
+```text
+backend/app/__init__.py              application factory, CORS, health
+backend/app/models.py                 SQLAlchemy Patient model
+backend/app/validators.py             shared backend validation rules
+backend/app/routes/patients.py        REST endpoints
+backend/migrations/versions/          schema migrations
+backend/tests/test_validators.py      nine backend validator tests
+frontend/src/App.jsx                  routes, layout, pages, modals
+frontend/src/validators.js             frontend validation rules
+frontend/src/api.js                   Axios API client
+frontend/src/constants.js             allowed values and ward mapping
+scripts/test_api.sh                   curl API smoke tests
+```
+
+## API endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/health` or `/api/health` | Database-backed health check |
+| GET | `/api/patients` | List, filter, search, stats, recent admissions |
+| GET | `/api/patients/<id>` | Get one patient; 404 if unknown |
+| POST | `/api/patients` | Create patient; 422 on validation errors |
+| PUT | `/api/patients/<id>` | Update patient |
+| PATCH | `/api/patients/<id>/discharge` | Set status and IST discharge date |
+| DELETE | `/api/patients/<id>` | Delete patient |
+
+List query parameters include `q`, `ward`, `department`, `doctor`, and `status`.
+
+## Validation rules
+
+| Field | Rule |
+|---|---|
+| Name | Required, 2–50 characters, letters/spaces/hyphens/apostrophes, saved in title case |
+| Age | Required integer from 0 through 120 |
+| Gender/Ward/Department/Doctor | Required and must match an allowed value |
+| Ward/Department | Must be a valid combination |
+| Admission date | Required valid date, not after today in Asia/Kolkata |
+| Status | Only `Admitted` or `Discharged` |
+
+Validation errors have this shape:
+
+```json
+{"success": false, "errors": {"age": "Age must be between 0 and 120"}}
+```
+
+## Tests
+
+Run backend validator tests:
+
+```powershell
+cd backend
+python -m unittest discover -s tests -v
+```
+
+Run API smoke tests from Git Bash or WSL after starting the services:
+
+```bash
+bash scripts/test_api.sh
+```
+
+Build the frontend:
+
+```powershell
+cd frontend
+npm run build
+```
+
+## Docker and GCP deployment
+
+The backend production image uses Gunicorn and the Cloud Run `PORT` variable. For GCP, build and push the image to Artifact Registry, deploy Flask to Cloud Run with Cloud SQL connectivity, store `DATABASE_URL` in Secret Manager, and deploy `frontend/dist` to Firebase Hosting with an SPA rewrite.
+
+```bash
+gcloud builds submit ./backend --tag REGION-docker.pkg.dev/PROJECT_ID/REPOSITORY/dscribe-api
+gcloud run deploy SERVICE_NAME --image REGION-docker.pkg.dev/PROJECT_ID/REPOSITORY/dscribe-api --region REGION --add-cloudsql-instances INSTANCE_CONNECTION_NAME
+cd frontend && npm run build && firebase deploy
+```
+
+Live application URL: `TODO - add after deployment`.
+
+## Screenshots
+
+Add final submission screenshots here: desktop overview, tablet layout, mobile layout, validation errors, and delete confirmation.
+
+## Known limitations
+
+- Local development uses Docker PostgreSQL; production requires Cloud SQL credentials and IAM configuration.
+- Free-tier hosting may have cold starts.
+- No authentication is included because the assignment explicitly does not require login/signup.
+
