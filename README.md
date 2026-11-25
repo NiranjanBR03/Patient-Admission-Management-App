@@ -161,6 +161,9 @@ Live application URL: `TODO - add after deployment`.
 ## Screenshots
 
 Add final submission screenshots here: desktop overview, tablet layout, mobile layout, validation errors, and delete confirmation.
+<img width="960" height="540" alt="Screenshot 2026-11-25 170320" src="https://github.com/user-attachments/assets/124f159e-8683-47e1-8c1d-d7388a3f9b22" />
+
+
 
 ## Known limitations
 
