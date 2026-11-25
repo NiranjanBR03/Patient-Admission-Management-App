@@ -5,7 +5,6 @@ A full-stack hospital patient admission dashboard for the DScribe Software Engin
 ## Why this stack
 
 - React + Vite + React Router provide a fast, route-aware browser application.
-- Flask provides a small, explicit REST API that is easy to explain in an interview.
 - SQLAlchemy and Flask-Migrate keep persistence and schema changes explicit.
 - PostgreSQL provides durable relational storage; Docker makes local setup repeatable.
 
@@ -179,14 +178,23 @@ and database migrations remain separate operations.
 
 ## Screenshots
 
-Add final submission screenshots here: desktop overview, tablet layout, mobile layout, validation errors, and delete confirmation.
-<img width="960" height="540" alt="Screenshot 2026-11-25 170320" src="https://github.com/user-attachments/assets/124f159e-8683-47e1-8c1d-d7388a3f9b22" />
+Desktop Overview
+<img width="960" height="540" alt="Screenshot 2026-11-25 175042" src="https://github.com/user-attachments/assets/ccd22ff9-7570-44b0-bcd6-cbbafea4f420" />
+<img width="960" height="540" alt="Screenshot 2026-11-25 175017" src="https://github.com/user-attachments/assets/c34de8ae-66b9-4c56-a382-7f8028d8ea6d" />
+<img width="960" height="540" alt="Screenshot 2026-11-25 175049" src="https://github.com/user-attachments/assets/2a4331d9-393f-49f8-ae39-249bdfc8039c" />
+<img width="959" height="539" alt="Screenshot 2026-11-25 175105" src="https://github.com/user-attachments/assets/ffa493a0-8c1c-42b9-82aa-3e725e41a406" />
+<img width="959" height="539" alt="Screenshot 2026-11-25 175136" src="https://github.com/user-attachments/assets/1f6e824b-7f52-4af8-8fdb-b089f81081ea" />
+<img width="959" height="539" alt="Screenshot 2026-11-25 175146" src="https://github.com/user-attachments/assets/c037537b-4f87-47db-9957-e9a4b8cf82c1" />
 
+
+Mobile Overview
+<img width="592" height="1280" alt="WhatsApp Image 2026-11-25 at 5 54 20 PM" src="https://github.com/user-attachments/assets/91f69010-042c-471c-8bf1-37e25928e80e" />
+<img width="592" height="1280" alt="WhatsApp Image 2026-11-25 at 5 54 20 PM (1)" src="https://github.com/user-attachments/assets/bdfbfbd7-8b26-4c55-9aa0-20e6809ecf44" />
+<img width="592" height="1280" alt="WhatsApp Image 2026-11-25 at 5 54 21 PM (2)" src="https://github.com/user-attachments/assets/a31fceb7-5480-4325-9cc2-434dbbc174da" />
+<img width="592" height="1280" alt="WhatsApp Image 2026-11-25 at 5 54 21 PM" src="https://github.com/user-attachments/assets/60fe563d-6216-402a-9451-155e7d2d273c" />
 
 
 ## Known limitations
 
 - Local development uses Docker PostgreSQL; production requires Cloud SQL credentials and IAM configuration.
-- Free-tier hosting may have cold starts.
-- No authentication is included because the assignment explicitly does not require login/signup.
 
