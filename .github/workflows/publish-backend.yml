@@ -1,0 +1,37 @@
+name: Publish backend image
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Build and push backend image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.WIF_SERVICE_ACCOUNT }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker authentication
+        run: gcloud auth configure-docker asia-south1-docker.pkg.dev --quiet
+
+      - name: Build backend image
+        run: docker build -t asia-south1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/dscribe-repo/dscribe-backend:${{ github.sha }} ./backend
+
+      - name: Push backend image
+        run: docker push asia-south1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/dscribe-repo/dscribe-backend:${{ github.sha }}
