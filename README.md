@@ -1,3 +1,16 @@
+## Hosting and Deployment
+
+The application is hosted on Google Cloud Platform (GCP) and Firebase:
+
+- Frontend: Firebase Hosting
+- Backend: Google Cloud Run
+- Database: Google Cloud SQL for PostgreSQL
+- Secrets: Google Cloud Secret Manager
+- Container images: Google Artifact Registry
+- CI/CD: GitHub Actions builds and tests the application, then automatically deploys the frontend when changes are pushed to main. Backend images are published separately.
+
+Live website: https://dscribe-patient-93800.web.app
+
 # DScribe Patient Admission Management
 
 A full-stack hospital patient admission dashboard for the DScribe Software Engineer Intern Round 1 assignment.
@@ -76,21 +89,6 @@ PostgreSQL dscribe database
 Docker named volume dscribe_dscribe-postgres
 ```
 
-## Folder structure
-
-```text
-backend/app/__init__.py              application factory, CORS, health
-backend/app/models.py                 SQLAlchemy Patient model
-backend/app/validators.py             shared backend validation rules
-backend/app/routes/patients.py        REST endpoints
-backend/migrations/versions/          schema migrations
-backend/tests/test_validators.py      nine backend validator tests
-frontend/src/App.jsx                  routes, layout, pages, modals
-frontend/src/validators.js             frontend validation rules
-frontend/src/api.js                   Axios API client
-frontend/src/constants.js             allowed values and ward mapping
-scripts/test_api.sh                   curl API smoke tests
-```
 
 ## API endpoints
 
