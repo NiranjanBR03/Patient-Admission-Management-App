@@ -36,6 +36,7 @@ def create_app(config_class=Config):
             db.session.execute(text("SELECT 1"))
             return jsonify({"success": True, "data": {"status": "ok"}})
         except Exception:
+            app.logger.exception("Database health check failed")
             db.session.rollback()
             return jsonify({"success": False, "data": {"status": "degraded"}}), 503
 
