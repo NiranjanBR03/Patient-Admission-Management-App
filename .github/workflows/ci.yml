@@ -33,7 +33,18 @@ jobs:
 
       - name: Build frontend
         working-directory: frontend
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://dscribe-backend-388064090184.asia-south1.run.app/api' }}
         run: npm run build
+
+      - name: Save production build
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          if-no-files-found: error
+          retention-days: 7
 
   backend:
     name: Test backend
@@ -55,3 +66,41 @@ jobs:
       - name: Run backend tests
         working-directory: backend
         run: python -m unittest discover -s tests -v
+
+  deploy_frontend:
+    name: Deploy Firebase Hosting
+    needs: [frontend, backend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: firebase-production
+      cancel-in-progress: false
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Download tested frontend build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.WIF_SERVICE_ACCOUNT }}
+
+      - name: Deploy frontend
+        working-directory: frontend
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+        run: npx --yes firebase-tools@15.37.0 deploy --only hosting --project "$GCP_PROJECT_ID" --non-interactive

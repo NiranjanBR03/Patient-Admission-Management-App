@@ -156,7 +156,26 @@ gcloud run deploy SERVICE_NAME --image REGION-docker.pkg.dev/PROJECT_ID/REPOSITO
 cd frontend && npm run build && firebase deploy
 ```
 
-Live application URL: `TODO - add after deployment`.
+Live application URL: https://dscribe-patient-93800.web.app
+
+### Automatic frontend deployment
+
+Pushing to `main` runs frontend build and backend tests in DScribe CI. If both
+succeed, the tested frontend build is deployed to Firebase Hosting automatically.
+Pull requests run checks only; they do not deploy. Failed checks leave the live
+website unchanged. Hosting deployment does not modify database contents.
+
+The workflow uses the repository variables `GCP_PROJECT_ID`, `WIF_PROVIDER`, and
+`WIF_SERVICE_ACCOUNT` for keyless Google Cloud authentication. The service account
+needs Firebase Hosting Admin and Service Usage Consumer permissions in the target
+project. No service-account JSON key or Firebase token is needed.
+
+Optional repository variable `VITE_API_URL` overrides the default deployed
+Cloud Run API URL. This is a public frontend setting, never a database password.
+
+Watch **Actions → DScribe CI → Deploy Firebase Hosting** after pushing.
+The separate backend workflow publishes an image only; Cloud Run deployment
+and database migrations remain separate operations.
 
 ## Screenshots
 
